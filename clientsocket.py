@@ -1,23 +1,55 @@
-# clientsocket.py
-
 import socket
+import hashlib
+import hmac
 
-HOST = "127.0.0.1"  # The server's hostname or IP address
-PORT = 3030  # The port used by the server
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((HOST, PORT))
-    message = b"Hello, world"
-    buffer = 1024
-    #Split the message in chunks of 1024 bytes
-    if len(message)>buffer:
-        splitted_message=[message[i:i+buffer] for i in range(0, len(message), buffer)]
-        data = b""
-        for chunk in splitted_message:
-            s.sendall(chunk)
-            data += s.recv(buffer)
-    else:
-        s.sendall(b"Hello, world")
-        data = s.recv(buffer)
+def main():
+    # Crea un socket TCP/IP
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-print(f"Received {data!r}")
+    # Asigna una dirección y un puerto al socket
+    server_address = ('localhost', 3030)
+    print('Conectando a {} puerto {}'.format(*server_address))
+    sock.connect(server_address)
+
+    try:
+        # Solicitar NONCE al servidor
+        sock.sendall(b'NONCE')
+
+        # Recibir NONCE del servidor
+        nonce = sock.recv(1024)
+
+        print('NONCE recibido:', nonce.decode())
+
+        # Envía los datos, HMAC y clave privada
+        account_from = input('Cuenta origen: ')
+        account_to = input('Cuenta destino: ')
+        amount = input('Cantidad: ')
+        message = account_from + ',' + account_to + ',' + amount
+        hmac_sent = hmac.new(nonce, message.encode(),
+                             hashlib.sha256).hexdigest()
+        data = message.encode()
+
+        # Envía los datos
+        print('Enviando mensaje:', data.decode())
+        sock.sendall(data)
+
+        # Envía el HMAC
+        print('Enviando HMAC:', hmac_sent)
+        sock.sendall(hmac_sent.encode())
+
+        # Espera la respuesta con HMAC
+        response = sock.recv(1024)
+        print('Respuesta recibida:', response.decode())
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        # Cierra la conexión
+        print('Cerrando conexión')
+        sock.close()
+
+
+if __name__ == '__main__':
+    main()
