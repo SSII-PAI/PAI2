@@ -47,7 +47,7 @@ def main():
 
                 while nonce == 0 or nonce in nonces_json["nonces"]:
                     # Generar NONCE aleatorio
-                    nonce = str(random.randint(0, 999999) + int(time.time())).encode()
+                    nonce = str(random.randint(0, 2^256)).encode()
 
                     # Comprobar que el NONCE no existe
                     if nonce not in nonces_json["nonces"]:
