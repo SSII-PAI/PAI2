@@ -13,14 +13,14 @@ def close_server(sock):
     sock.close()
     sys.exit(0)
 
-
 def main():
     # Crea un fichero para almacenar los NONCE si no existe
-    if not os.path.exists('nonces.json'):
-        json.dump({'nonces': []}, open('nonces.json', 'w'))
+    nonces_file = 'nonces.json'
+    if not os.path.exists(nonces_file):
+        json.dump({'nonces': []}, open(nonces_file, 'w'))
     
     # Carga los NONCE del fichero
-    nonces_json = json.load(open('nonces.json', 'r'))
+    nonces_json = json.load(open(nonces_file, 'r'))
     
     # Crea un socket y escucha las conexiones entrantes
     server_address = ('localhost', 3030)
@@ -52,7 +52,7 @@ def main():
                     # Comprobar que el NONCE no existe
                     if nonce not in nonces_json["nonces"]:
                         # Añadir NONCE al fichero
-                        with open('nonces.json', 'r+') as file:
+                        with open(nonces_file, 'r+') as file:
                             nonces_json["nonces"].append(nonce.decode())
                             file.seek(0)
                             json.dump(nonces_json, file)
