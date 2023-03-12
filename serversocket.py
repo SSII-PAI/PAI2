@@ -15,7 +15,6 @@ def close_server(sock):
     sock.close()
     sys.exit(0)
 
-
 def main():
     # Crea un fichero para almacenar los NONCE si no existe
     if not os.path.exists('nonces.json'):
