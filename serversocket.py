@@ -80,6 +80,7 @@ def check_hmac(nonce, data, hmac_received, logs_txt):
         message = 'Error: El mensaje ha sido alterado o no se puede verificar la fuente.'
         current_time = time.strftime('%Y-%m-%d %H:%M:%S')
         logs_txt.write(f"[{current_time}]: {message}\n")
+        print(f"[{current_time}]: {message}")
     else:
         # Procesa la transferencia
         transfer = data.decode().split(',')
@@ -88,6 +89,7 @@ def check_hmac(nonce, data, hmac_received, logs_txt):
         amount = transfer[2]
         message = 'Transferencia de {} a {} por un valor de {} realizada.'.format(
             account_from, account_to, amount)
+        print(message)
 
     return message
 
@@ -114,12 +116,15 @@ def main():
         try:
             # Recibir petición de NONCE
             nonce_request = connection.recv(1024)
+            
+            print('Petición recibida:', nonce_request.decode())
 
             # Conexión sin petición de NONCE
             if nonce_request.decode() != 'NONCE':
                 message = 'Error: La petición no es válida, posible ataque de reply.'
                 current_time = time.strftime('%Y-%m-%d %H:%M:%S')
                 logs_txt.write(f"[{current_time}]: {message}\n")
+                print(f"[{current_time}]: {message}")
                 connection.sendall(bytes(message, 'utf-8'))
                 continue
 
