@@ -18,10 +18,10 @@ def main():
 
         # Recibir NONCE del servidor
         nonce = sock.recv(1024)
-        
+
         # Comprobar que el nonce es un número, sino es un mensaje de error
         try:
-            n_nonce = int(nonce)
+            int(nonce)
         except ValueError:
             # Cerrar la conexión
             print('Cerrando conexión')
