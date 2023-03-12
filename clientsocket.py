@@ -19,6 +19,17 @@ def main():
         # Recibir NONCE del servidor
         nonce = sock.recv(1024)
 
+        # Comprobar que el nonce es un número, sino es un mensaje de error
+        try:
+            int(nonce)
+        except ValueError:
+            # Cerrar la conexión
+            print('Cerrando conexión')
+            sock.close()
+            # Mostrar el mensaje de error
+            print(nonce.decode())
+            return
+
         print('NONCE recibido:', nonce.decode())
 
         # Envía los datos, HMAC y clave privada
