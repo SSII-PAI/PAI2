@@ -14,7 +14,7 @@ def main():
 
     try:
         # Solicitar NONCE al servidor
-        sock.sendall(b'NOCE')
+        sock.sendall(b'NONCE')
 
         # Recibir NONCE del servidor
         nonce = sock.recv(1024)
